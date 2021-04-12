@@ -1,4 +1,6 @@
-# SpeedrunBlogengine.Umbrella
+# Speedrun Blogengine
+
+> This project is part of a teaching class
 
 To run the project you need first to have a Postgres container running on port 5432. We embed a docker-compose configuration to ease setting up the environment.
 
