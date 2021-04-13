@@ -10,5 +10,6 @@ defmodule SpeedrunBlogengineWeb.Router do
 
     # Criar um author
     post "/authors", AuthorController, :create
+    get "/authors/:id", AuthorController, :show
   end
 end
