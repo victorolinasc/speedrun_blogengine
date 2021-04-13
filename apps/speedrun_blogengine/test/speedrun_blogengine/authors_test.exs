@@ -10,6 +10,20 @@ defmodule SpeedrunBlogengine.AuthorsTest do
   # ALWAYS make a test fail once
 
   test "fail if email is already taken" do
+    email = "joe@erlang.com"
+
+    Authors.create_new_author(%Inputs.Create{
+      name: "Joe Armstrong",
+      email: email,
+      email_confirmation: email
+    })
+
+    assert {:error, :email_conflict} =
+             Authors.create_new_author(%Inputs.Create{
+               name: "Joe Armstrong",
+               email: email,
+               email_confirmation: email
+             })
   end
 
   test "successfully create an author with valid input" do
