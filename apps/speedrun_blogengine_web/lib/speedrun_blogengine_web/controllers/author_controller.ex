@@ -15,8 +15,13 @@ defmodule SpeedrunBlogengineWeb.AuthorController do
          {:ok, author} <- Authors.create_new_author(input) do
       send_json(conn, 200, author)
     else
-      {:error, %Ecto.Changeset{}} ->
-        msg = %{type: "bad_input", description: "Invalid input"}
+      {:error, %Ecto.Changeset{errors: errors}} ->
+        msg = %{
+          type: "bad_input",
+          description: "Invalid input",
+          details: changeset_errors_to_details(errors)
+        }
+
         send_json(conn, 400, msg)
 
       {:error, :email_conflict} ->
@@ -29,5 +34,11 @@ defmodule SpeedrunBlogengineWeb.AuthorController do
     conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(status, Jason.encode!(body))
+  end
+
+  defp changeset_errors_to_details(errors) do
+    errors
+    |> Enum.map(fn {key, {message, _opts}} -> {key, message} end)
+    |> Map.new()
   end
 end

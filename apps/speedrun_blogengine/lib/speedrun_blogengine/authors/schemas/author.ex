@@ -5,6 +5,7 @@ defmodule SpeedrunBlogengine.Authors.Schemas.Author do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import SpeedrunBlogengine.Changesets
 
   @required [:name, :email]
   @optional []
@@ -25,6 +26,6 @@ defmodule SpeedrunBlogengine.Authors.Schemas.Author do
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
     |> validate_length(:name, min: 3)
-    |> validate_format(:email, ~r/^[A-Za-z0-9._%+\-+']+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,4}$/)
+    |> validate_email(:email)
   end
 end
