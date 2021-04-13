@@ -10,6 +10,17 @@ defmodule SpeedrunBlogengine.AuthorsTest do
   # ALWAYS make a test fail once
 
   test "fail if email is already taken" do
+    email = "#{Ecto.UUID.generate()}@email.com"
+
+    input = %Inputs.Create{
+               name: "random name",
+               email: email,
+               email_confirmation: email
+             }
+
+    Authors.create_new_author(input)
+
+    assert {:error, :email_conflict} = Authors.create_new_author(input)
   end
 
   test "successfully create an author with valid input" do
@@ -29,4 +40,5 @@ defmodule SpeedrunBlogengine.AuthorsTest do
 
     assert [^author] = Repo.all(query)
   end
+
 end
