@@ -11,6 +11,7 @@ defmodule SpeedrunBlogengineWeb.InputValidation do
 
   When validation fails, it returns {:error, changeset}.
   """
+  @spec cast_and_apply(map(), module()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}
   def cast_and_apply(params, module) do
     case module.changeset(params) do
       %{valid?: true} = changeset ->
