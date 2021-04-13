@@ -5,6 +5,7 @@ defmodule SpeedrunBlogengine.Authors.Inputs.Create do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import SpeedrunBlogengine.Changesets
 
   @required [:name, :email, :email_confirmation]
   @optional []
@@ -22,26 +23,14 @@ defmodule SpeedrunBlogengine.Authors.Inputs.Create do
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
     |> validate_length(:name, min: 3)
-    |> validate_format(:email, ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/)
-    |> validate_format(
-      :email_confirmation,
-      ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
-    )
-    |> validate_email_and_confirmation_are_the_same()
-  end
-
-  defp validate_email_and_confirmation_are_the_same(%{valid?: false} = changeset) do
-    changeset
-  end
-
-  defp validate_email_and_confirmation_are_the_same(changeset) do
-    email = get_change(changeset, :email)
-    confirmation = get_change(changeset, :email_confirmation)
-
-    if email == confirmation do
-      changeset
-    else
-      add_error(changeset, :email_and_confirmation, "Email and confirmation must be the same")
-    end
+    |> validate_email(:email)
+    |> validate_email(:email_confirmation)
+    |> validate_fields([:email, :email_confirmation], fn changes, changeset ->
+      if changes[:email] == changes[:email_confirmation] do
+        changeset
+      else
+        add_error(changeset, :email_and_confirmation, "Email and confirmation must be the same")
+      end
+    end)
   end
 end
