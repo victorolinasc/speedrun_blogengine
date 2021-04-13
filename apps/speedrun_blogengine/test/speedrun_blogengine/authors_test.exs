@@ -40,5 +40,4 @@ defmodule SpeedrunBlogengine.AuthorsTest do
 
     assert [^author] = Repo.all(query)
   end
-
 end
