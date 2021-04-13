@@ -10,6 +10,19 @@ defmodule SpeedrunBlogengine.Authors do
   require Logger
 
   @doc """
+  Fetch an author from the database.
+  """
+  @spec fetch(Ecto.UUID.t()) :: {:ok, Author.t()} | {:error, :not_found}
+  def fetch(author_id) do
+    Logger.debug("Fetch author by id: #{inspect(author_id)}")
+
+    case Repo.get(Author, author_id) do
+      nil -> {:error, :not_found}
+      author -> {:ok, author}
+    end
+  end
+
+  @doc """
   Given a VALID changeset it attempts to insert a new author.
 
   It might fail due to email unique index and we transform that return

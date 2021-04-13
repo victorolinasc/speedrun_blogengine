@@ -34,4 +34,16 @@ defmodule SpeedrunBlogengine.AuthorsTest do
       assert [^author] = Repo.all(query)
     end
   end
+
+  describe "fetch/1" do
+    test "successfully fetch an author from the DB" do
+      author = Repo.insert!(%Author{email: "#{Ecto.UUID.generate()}@email.com"})
+
+      assert {:ok, author} == Authors.fetch(author.id)
+    end
+
+    test "fail with not_found if no author has the given id" do
+      assert {:error, :not_found} == Authors.fetch(Ecto.UUID.generate())
+    end
+  end
 end

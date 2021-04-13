@@ -99,4 +99,45 @@ defmodule SpeedrunBlogengineWeb.AuthorControllerTest do
              }
     end
   end
+
+  describe "GET /api/authors/:id" do
+    test "fail if id is not an UUID", ctx do
+      assert ctx.conn
+             |> get("/api/authors/qualquercoisa")
+             |> json_response(400) == %{
+               "description" => "Not a proper UUID v4",
+               "type" => "bad_input"
+             }
+    end
+
+    test "fail if there are no authors with the given id", ctx do
+      assert ctx.conn
+             |> get("/api/authors/#{Ecto.UUID.generate()}")
+             |> json_response(404) == %{
+               "description" => "Author not found",
+               "type" => "not_found"
+             }
+    end
+
+    test "successfully show author details", ctx do
+      author =
+        Repo.insert!(%Author{email: "#{Ecto.UUID.generate()}@email.com", name: "Some name"})
+
+      assert %{
+               "email" => email,
+               "id" => id,
+               "inserted_at" => inserted_at,
+               "name" => "Some name",
+               "updated_at" => updated_at
+             } =
+               ctx.conn
+               |> get("/api/authors/#{author.id}")
+               |> json_response(200)
+
+      assert email == author.email
+      assert id == author.id
+      assert inserted_at == NaiveDateTime.to_iso8601(author.inserted_at)
+      assert updated_at == NaiveDateTime.to_iso8601(author.updated_at)
+    end
+  end
 end
