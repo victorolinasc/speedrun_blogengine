@@ -9,6 +9,7 @@ defmodule SpeedrunBlogengineWeb.AuthorController do
 
   alias SpeedrunBlogengineWeb.InputValidation
 
+  # params = path_parameters + query_parameters + body
   def create(conn, params) do
     with {:ok, input} <- InputValidation.cast_and_apply(params, Inputs.Create),
          {:ok, author} <- Authors.create_new_author(input) do
