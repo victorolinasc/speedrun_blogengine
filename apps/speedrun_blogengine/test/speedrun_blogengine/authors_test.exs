@@ -29,4 +29,23 @@ defmodule SpeedrunBlogengine.AuthorsTest do
 
     assert [^author] = Repo.all(query)
   end
+
+  test "yields error when email has already been taken" do
+    email = "taken@email.com"
+
+    Authors.create_new_author(%Inputs.Create{
+      name: "Some Author Name",
+      email: email,
+      email_confirmation: email
+    })
+
+    assert {:error, :email_conflict} =
+             Authors.create_new_author(%Inputs.Create{
+               name: "Some author name",
+               email: email,
+               email_confirmation: email
+             })
+
+    assert 1 = Repo.all(Author) |> length()
+  end
 end
